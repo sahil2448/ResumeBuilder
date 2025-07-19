@@ -1,6 +1,5 @@
 import User from "../models/users.model.js";
-// import Profile from "../models/profile.model.js";
-// import Profile from "../models/profile.model.js";
+import Profile from "../models/profile.model.js";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import PDFDocument from "pdfkit";
@@ -52,11 +51,11 @@ const register = async (req, res) => {
     });
     await newUser.save();
 
-    // const newProfile = new Profile({
-    //   userId: newUser._id,
-    // });
+    const newProfile = new Profile({
+      userId: newUser._id,
+    });
 
-    // await newProfile.save();
+    await newProfile.save();
 
     return res.status(201).json({ message: "User registered successfully !" });
   } catch (e) {
@@ -88,158 +87,158 @@ const Login = async (req, res) => {
 
     await User.updateOne({ _id: user._id }, { token });
 
-    return res.json({ token: token });
+    return res.json({ success: "Successfully logged in", token: token });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-// const uploadProfilePicture = async (req, res) => {
-//   const { token } = req.body;
-//   try {
-//     const user = await User.findOne({ token });
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-//     user.profilePicture = req.file.filename;
+const uploadProfilePicture = async (req, res) => {
+  const { token } = req.body;
+  try {
+    const user = await User.findOne({ token });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    user.profilePicture = req.file.filename;
 
-//     await user.save();
-//     return res
-//       .status(200)
-//       .json({ message: "Profile picture updated successfully" });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
+    await user.save();
+    return res
+      .status(200)
+      .json({ message: "Profile picture updated successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
-// const updateUserProfile = async (req, res) => {
-//   try {
-//     const { token, ...newUserData } = req.body; // token will be stored in token...and newUserData will be having other data of user
-//     const user = await User.findOne({ token });
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-//     const { username, email } = newUserData;
+const updateUserProfile = async (req, res) => {
+  try {
+    const { token, ...newUserData } = req.body; // token will be stored in token...and newUserData will be having other data of user
+    const user = await User.findOne({ token });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const { username, email } = newUserData;
 
-//     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
 
-//     if (existingUser) {
-//       if (existingUser || String(existingUser._id) !== String(user._id)) {
-//         return res
-//           .status(400)
-//           .json({ message: "Username or email already exists" });
-//       }
-//     }
+    if (existingUser) {
+      if (existingUser || String(existingUser._id) !== String(user._id)) {
+        return res
+          .status(400)
+          .json({ message: "Username or email already exists" });
+      }
+    }
 
-//     Object.assign(user, newUserData); // user ko newUserData assign kr diya
-//     await user.save();
+    Object.assign(user, newUserData); // user ko newUserData assign kr diya
+    await user.save();
 
-//     return res.json({ message: "User updated successfully" });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
+    return res.json({ message: "User updated successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
-// const getUserAndProfle = async (req, res) => {
-//   try {
-//     const { token } = req.query;
-//     const user = await User.findOne({ token });
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
+const getUserAndProfle = async (req, res) => {
+  try {
+    const { token } = req.query;
+    const user = await User.findOne({ token });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-//     const userProfile = await Profile.findOne({ userId: user._id }).populate(
-//       "userId",
-//       "name email username profilePicture"
-//     );
+    const userProfile = await Profile.findOne({ userId: user._id }).populate(
+      "userId",
+      "name email username profilePicture"
+    );
 
-//     await userProfile.save();
+    await userProfile.save();
 
-//     return res.json(userProfile);
-//   } catch (e) {
-//     return res.status(500).json({ message: e.message });
-//   }
-// };
+    return res.json({ userProfile: userProfile });
+  } catch (e) {
+    return res.status(500).json({ message: e.message });
+  }
+};
 
-// const getProfileUsingUsername = async (req, res) => {
-//   try {
-//     const { username } = req.query;
+const getProfileUsingUsername = async (req, res) => {
+  try {
+    const { username } = req.query;
 
-//     const user = await User.findOne({ username });
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-//     const userProfile = await Profile.findOne({ userId: user._id }).populate(
-//       "userId",
-//       "name email username profilePicture"
-//     );
+    const userProfile = await Profile.findOne({ userId: user._id }).populate(
+      "userId",
+      "name email username profilePicture"
+    );
 
-//     await userProfile.save();
-//     return res.json({ profile: userProfile });
-//   } catch (e) {
-//     return res.status(500).json({ message: e.message });
-//   }
-// };
+    await userProfile.save();
+    return res.json({ profile: userProfile });
+  } catch (e) {
+    return res.status(500).json({ message: e.message });
+  }
+};
 
-// const updateProfileData = async (req, res) => {
-//   try {
-//     const { token, ...newProfileData } = req.body;
-//     const user = await User.findOne({ token });
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
+const updateProfileData = async (req, res) => {
+  try {
+    const { token, ...newProfileData } = req.body;
+    const user = await User.findOne({ token });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-//     const profile_to_update = await Profile.findOne({ userId: user._id });
+    const profile_to_update = await Profile.findOne({ userId: user._id });
 
-//     Object.assign(profile_to_update, newProfileData);
-//     await profile_to_update.save();
-//     return res.json({ message: "Profile updated successfully" });
-//   } catch (e) {
-//     return res.status(500).json({ message: e.message });
-//   }
-// };
+    Object.assign(profile_to_update, newProfileData);
+    await profile_to_update.save();
+    return res.json({ message: "Profile updated successfully" });
+  } catch (e) {
+    return res.status(500).json({ message: e.message });
+  }
+};
 
-// const getAllUserProfile = async (req, res) => {
-//   try {
-//     const allUserProfile = await Profile.find().populate(
-//       "userId",
-//       "name username email profilePicture"
-//     );
-//     return res.json({ allUserProfile });
-//   } catch (e) {
-//     return res.status(500).json({ message: e.message });
-//   }
-// };
+const getAllUserProfile = async (req, res) => {
+  try {
+    const allUserProfile = await Profile.find().populate(
+      "userId",
+      "name username email profilePicture"
+    );
+    return res.json({ allUserProfile });
+  } catch (e) {
+    return res.status(500).json({ message: e.message });
+  }
+};
 
-// const downloadProfile = async (req, res) => {
-//   try {
-//     const user_id = req.query.id;
-//     // console.log("query", req.query);
-//     const userProfile = await Profile.findOne({ userId: user_id }).populate(
-//       "userId",
-//       "name username email profilePicture"
-//     );
-//     // console.log("output", userProfile);
-//     const outputPath = await convertUserDataToPDF(userProfile);
-//     if (!outputPath) {
-//       console.log("outputPath not found");
-//     }
-//     // console.log(outputPath);
-//     return res.json({ message: outputPath });
-//   } catch (e) {
-//     return res.status(500).json({ message: e.message });
-//   }
-// };
+const downloadProfile = async (req, res) => {
+  try {
+    const user_id = req.query.id;
+    // console.log("query", req.query);
+    const userProfile = await Profile.findOne({ userId: user_id }).populate(
+      "userId",
+      "name username email profilePicture"
+    );
+    // console.log("output", userProfile);
+    const outputPath = await convertUserDataToPDF(userProfile);
+    if (!outputPath) {
+      console.log("outputPath not found");
+    }
+    // console.log(outputPath);
+    return res.json({ message: outputPath });
+  } catch (e) {
+    return res.status(500).json({ message: e.message });
+  }
+};
 
 export {
   register,
   Login,
-  // uploadProfilePicture,
-  // updateUserProfile,
-  // getUserAndProfle,
-  // updateProfileData,
-  // getAllUserProfile,
-  // getProfileUsingUsername,
-  // downloadProfile,
+  uploadProfilePicture,
+  updateUserProfile,
+  getUserAndProfle,
+  updateProfileData,
+  getAllUserProfile,
+  getProfileUsingUsername,
+  downloadProfile,
 };

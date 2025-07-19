@@ -2,8 +2,13 @@ import { Router } from "express";
 import {
   register,
   Login,
-
-  //   getProfileUsingUsername,
+  updateUserProfile,
+  getUserAndProfle,
+  updateProfileData,
+  getAllUserProfile,
+  getProfileUsingUsername,
+  downloadProfile,
+  uploadProfilePicture,
 } from "../controllers/user.controller.js";
 import multer from "multer";
 
@@ -22,17 +27,17 @@ const myStorage = multer.diskStorage({
 
 const upload = multer({ storage: myStorage });
 
-// router
-//   .route("/update_profile_picture")
-//   .post(upload.single("profile_picture"), uploadProfilePicture);
+router
+  .route("/update_profile_picture")
+  .post(upload.single("profile_picture"), uploadProfilePicture);
 
 router.route("/register").post(register);
 router.route("/login").post(Login);
-// router.route("/user_update").post(updateUserProfile);
-// router.route("/get_user_and_profile").get(getUserAndProfle);
-// router.route("/update_profile_data").post(updateProfileData);
-// router.route("/get_All_Users").get(getAllUserProfile);
-// // router.route("/getProfileUsingUsername").get(getProfileUsingUsername);
-// router.route("/download_resume").get(downloadProfile);
+router.route("/user_update").post(updateUserProfile);
+router.route("/get_user_and_profile").get(getUserAndProfle);
+router.route("/update_profile_data").post(updateProfileData);
+router.route("/get_All_Users").get(getAllUserProfile);
+router.route("/getProfileUsingUsername").get(getProfileUsingUsername);
+router.route("/download_resume").get(downloadProfile);
 
 export default router;
