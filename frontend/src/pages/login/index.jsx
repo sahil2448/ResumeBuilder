@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import UserLayout from "@/layouts/UserLayout";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { registerUser, loginUser } from "@/lib/auth";
 import { useRouter } from "next/router";
 
@@ -13,7 +13,16 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [token, setToken] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    setToken(storedToken);
+    if (storedToken) {
+      router.push("/dashboard"); // Redirect to dashboard if token exists
+    }
+  });
 
   const handleRegister = async (e) => {
     e.preventDefault();
