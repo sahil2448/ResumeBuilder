@@ -13,31 +13,46 @@ function Navbar() {
   }, []);
 
   return (
-    <nav className="flex justify-between">
+    <nav className="flex justify-between  px-10 p-4">
       <h1
         className="text-2xl font-bold cursor-pointer"
         onClick={() => router.push("/")}
       >
         {"Resume Builder"}
       </h1>
-      <div className="flex flex-wrap items-center gap-2 md:flex-row">
-        {
-          <Button
-            variant="secondary"
-            className="bg-white text-black cursor-pointer"
-            onClick={
-              token
-                ? () => {
-                    localStorage.removeItem("token");
-                    setToken(null);
-                    router.push("/login");
-                  }
-                : () => router.push("/login")
-            }
-          >
-            {token ? "Logout" : "Login"}
-          </Button>
-        }
+      <div className="flex gap-4">
+        <div>
+          {" "}
+          {token && (
+            <Button
+              variant="secondary"
+              className="bg-white text-black cursor-pointer"
+              onClick={() => router.push("/dashboard")}
+            >
+              Dashboard
+            </Button>
+          )}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 md:flex-row">
+          {
+            <Button
+              variant="secondary"
+              className="bg-white text-black cursor-pointer"
+              onClick={
+                token
+                  ? () => {
+                      localStorage.removeItem("token");
+                      setToken(null);
+                      router.push("/login");
+                    }
+                  : () => router.push("/login")
+              }
+            >
+              {token ? "Logout" : "Login"}
+            </Button>
+          }
+        </div>
       </div>
     </nav>
   );

@@ -46,9 +46,13 @@ export default function Login() {
     setMessage("");
     try {
       const data = await loginUser({ email, password });
-      localStorage.setItem("token", data.token); // Save the token as instructed by backend
-      setMessage("Login successful!");
-      router.push("/dashboard"); // navigate on login success
+      if (data && data.token && data.success) {
+        localStorage.setItem("token", data.token); // Save the token as instructed by backend
+        setMessage("Login successful!");
+        router.push("/dashboard"); // navigate on login success
+      } else {
+        setError(data.message || "Invalid login");
+      }
     } catch (err) {
       setError(err.response?.data?.message || err.message);
     }
@@ -57,7 +61,7 @@ export default function Login() {
 
   return (
     <UserLayout>
-      <main className="min-h-screen w-full gradient-to-br from-black via-zinc-900 to-zinc-800 flex items-center justify-center">
+      <main className="min-h-[80vh] w-full gradient-to-br from-black via-zinc-900 to-zinc-800 flex items-center justify-center">
         <div className="relative bg-white rounded-2xl border border-zinc-200 shadow-xl max-w-lg w-full mx-4 overflow-hidden">
           <div className="flex flex-col items-center pt-8 pb-3 px-6">
             <span className="text-3xl font-bold text-zinc-900 mb-2 tracking-tight">
@@ -109,11 +113,15 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               className="bg-zinc-50 border border-zinc-200 rounded-lg px-4 py-2 w-full  outline-none text-black placeholder-gray-600"
             />
+            <div className="flex justify-center">
+              {" "}
+              {error && <div className="text-red-600 mx-auto">{error}</div>}
+            </div>
             <Button
               type="submit"
               variant=""
               onClick={UserLoginMethod ? handleLogin : handleRegister}
-              className="w-full bg-black text-white rounded-lg py-2 font-semibold shadow-xs active:scale-95 transition"
+              className="w-full bg-black text-white rounded-lg py-2 font-semibold shadow-xs active:scale-95 transition cursor-pointer"
             >
               {UserLoginMethod ? "Sign In" : "Sign Up"}
             </Button>
@@ -128,7 +136,7 @@ export default function Login() {
             <button
               type="button"
               onClick={() => setUserLoginMethod((v) => !v)}
-              className="underline text-indigo-700 font-medium hover:no-underline"
+              className="underline cursor-pointer  text-black font-medium hover:no-underline"
             >
               {UserLoginMethod ? "Sign up" : "Sign in"}
             </button>

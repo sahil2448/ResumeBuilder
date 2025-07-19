@@ -3,7 +3,7 @@ import React from "react";
 
 function UserLayout({ children }) {
   return (
-    <div className="p-5">
+    <div className=" ">
       <Navbar />
       {children}
     </div>
