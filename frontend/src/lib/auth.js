@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const BASE_URL = "https://resumebuilder-0spv.onrender.com/";
-const 
+// const BASE_URL = "http://localhost:9090";
+const BASE_URL = "https://resumebuilder-0spv.onrender.com";
 // lib/auth.js
 
 export const registerUser = async ({ name, username, email, password }) => {
@@ -49,7 +49,7 @@ export const getAboutUser = async (user) => {
 
 export const updateUserProfile = async (user) => {
   try {
-    const response = await axios.post(`${BASE_URL}/user/update_profile_data`, {
+    const response = await axios.get(`${BASE_URL}/user/update_profile_data`, {
       token: user.token,
       bio: user.bio,
       currentPost: user.currentPost,
