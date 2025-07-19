@@ -1,13 +1,13 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:9090/user";
+const BASE_URL = "https://resumebuilder-0spv.onrender.com/";
 // lib/auth.js
 
 export const registerUser = async ({ name, username, email, password }) => {
   // adapt endpoint based on your backend setup
 
   try {
-    const response = await axios.post(`${BASE_URL}/register`, {
+    const response = await axios.post(`${BASE_URL}/user/register`, {
       name,
       username,
       email,
@@ -22,7 +22,7 @@ export const registerUser = async ({ name, username, email, password }) => {
 // Login API call
 export const loginUser = async ({ email, password }) => {
   try {
-    const response = await axios.post(`${BASE_URL}/login`, {
+    const response = await axios.post(`${BASE_URL}/user/login`, {
       email,
       password,
     });
@@ -35,7 +35,7 @@ export const loginUser = async ({ email, password }) => {
 //Passing the token in params ensures the backend receives it in the expected format/location, allowing it to authenticate and authorize the request properly. If your backend expects the token in headers, you should use the Authorization header instead. Always match your frontend request format to your backend's requirements.
 export const getAboutUser = async (user) => {
   try {
-    const response = await axios.get(`${BASE_URL}/get_user_and_profile`, {
+    const response = await axios.get(`${BASE_URL}/user/get_user_and_profile`, {
       params: {
         token: user.token,
       },
@@ -48,7 +48,7 @@ export const getAboutUser = async (user) => {
 
 export const updateUserProfile = async (user) => {
   try {
-    const response = await axios.post(`${BASE_URL}/update_profile_data`, {
+    const response = await axios.post(`${BASE_URL}/user/update_profile_data`, {
       token: user.token,
       bio: user.bio,
       currentPost: user.currentPost,
