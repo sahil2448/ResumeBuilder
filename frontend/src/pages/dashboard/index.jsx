@@ -24,25 +24,31 @@ function DashboardIndex() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchUser = async () => {
+    setLoading(true);
+    try {
+      const response = await getAboutUser({
+        token: localStorage.getItem("token"),
+      });
+      setUserData(response);
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchUser = async () => {
-      setLoading(true);
-      try {
-        const response = await getAboutUser({
-          token: localStorage.getItem("token"),
-        });
-        setUserData(response);
-      } catch (err) {
-        setError(err.response?.data?.message || err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchUser();
   }, []);
 
   const components = [
-    <ResumesPage userData={userData} loading={loading} key="resumes" />,
+    <ResumesPage
+      userData={userData}
+      refreshUser={fetchUser}
+      loading={loading}
+      key="resumes"
+    />,
     <UserPage userData={userData} loading={loading} key="user" />,
   ];
 
@@ -71,7 +77,7 @@ function DashboardIndex() {
   );
 }
 
-function ResumesPage({ userData, loading }) {
+function ResumesPage({ userData, loading, refreshUser }) {
   const templates = [
     "/Templates/r1.webp",
     "/Templates/r2.png",
@@ -106,6 +112,7 @@ function ResumesPage({ userData, loading }) {
       console.log("YES2");
       console.log(response);
       if (response && response.data.message) {
+        await refreshUser();
         getAboutUser({ token: localStorage.getItem("token") });
         console.log(response);
       } else {
