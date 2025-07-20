@@ -32,13 +32,6 @@ function HomePage() {
     },
   ];
 
-  const stats = [
-    { number: "2M+", label: "Resumes Created" },
-    { number: "95%", label: "Success Rate" },
-    { number: "500K+", label: "Happy Users" },
-    { number: "4.9/5", label: "User Rating" },
-  ];
-
   const testimonials = [
     {
       name: "Sarah Johnson",
@@ -62,9 +55,9 @@ function HomePage() {
 
   return (
     <UserLayout>
-      <div className="min-h-screen  text-white">
+      <div className="min-h-screen text-white flex flex-col gap-30">
         {/* Hero Section */}
-        <section className="relative py-20 px-4 text-center">
+        <section className="relative py-20 px-4 h-screen text-center">
           <div className="max-w-6xl mx-auto">
             <Badge
               variant="secondary"
@@ -100,15 +93,25 @@ function HomePage() {
               </Button>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-              {stats.map((stat, index) => (
-                <div key={index} className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-white mb-2">
-                    {stat.number}
-                  </div>
-                  <div className="text-gray-400 text-sm md:text-base">
-                    {stat.label}
+            {/* Testimonials Section */}
+            <div className="text-center mb-20 mt-40">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">
+                What Our Users Say
+              </h2>
+              <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+                Real feedback from professionals who achieved success with our
+                tool.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              {testimonials.map((t, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-800 p-6 rounded-2xl shadow-md"
+                >
+                  <p className="text-gray-200 text-lg mb-4">"{t.content}"</p>
+                  <div className="font-semibold text-white">
+                    {t.name}, <span className="text-gray-400">{t.role}</span>
                   </div>
                 </div>
               ))}
@@ -117,7 +120,7 @@ function HomePage() {
         </section>
 
         {/* How It Works */}
-        <section className="py-20 px-4">
+        <section className="pb-10 pt-40 px-4 h-screen text-center mt-30">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-6">

@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:9090";
-// const BASE_URL = "https://resumebuilder-0spv.onrender.com";
+// const BASE_URL = "http://localhost:9090";
+const BASE_URL = "https://resumebuilder-0spv.onrender.com";
 // lib/auth.js
 
 export const registerUser = async ({ name, username, email, password }) => {

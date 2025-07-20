@@ -49,27 +49,39 @@ function DashboardIndex() {
       loading={loading}
       key="resumes"
     />,
-    <UserPage userData={userData} loading={loading} key="user" />,
+    <UserPage
+      userData={userData}
+      refreshUser={fetchUser}
+      loading={loading}
+      key="user"
+    />,
   ];
 
   return (
     <UserLayout>
-      <div className="flex gap-10">
-        <div className="w-[20%] py-5 flex flex-col gap-3">
+      {/* Responsive layout: flex-col on mobile, flex-row on md+ */}
+      <div className="flex flex-col md:flex-row gap-4 md:gap-10">
+        {/* Sidebar */}
+        <div className="w-full md:w-1/5 py-3 md:py-5 flex md:flex-col gap-2 md:gap-3 border-b md:border-b-0 md:border-r border-neutral-800 bg-neutral-900/30 rounded-md">
           {sideBarItems.map((item, idx) => (
             <div
               key={idx}
-              className={`cursor-pointer px-5 py-3 ${
-                activeIdx === idx ? "bg-neutral-900" : ""
-              }`}
+              className={`cursor-pointer px-3 py-2 md:px-5 md:py-3 rounded text-center font-medium
+                ${
+                  activeIdx === idx
+                    ? "bg-neutral-900 text-white"
+                    : "hover:bg-neutral-900/50"
+                }
+              `}
               onClick={() => setActiveIdx(idx)}
             >
               {item}
             </div>
           ))}
         </div>
-        <div className="w-[80%]">
-          {error && <p className="text-red-500">Error: {error}</p>}
+        {/* Main Content */}
+        <div className="flex-1 w-full md:w-4/5 px-2 md:px-0">
+          {error && <p className="text-red-500 break-words">Error: {error}</p>}
           {loading ? <p>Loading user data...</p> : components[activeIdx]}
         </div>
       </div>
@@ -101,7 +113,6 @@ function ResumesPage({ userData, loading, refreshUser }) {
     setSubmitting(true);
     try {
       const token = localStorage.getItem("token");
-      console.log("YES");
       const response = await updateUserProfile({
         token,
         bio,
@@ -109,18 +120,10 @@ function ResumesPage({ userData, loading, refreshUser }) {
         education,
         pastWork,
       });
-      console.log("YES2");
-      console.log(response);
       if (response && response.data.message) {
         await refreshUser();
         getAboutUser({ token: localStorage.getItem("token") });
-        console.log(response);
-      } else {
-        console.log("NO");
       }
-      // if (!response.ok) {
-      //   throw new Error(response.data?.message || "Failed to update profile");
-      // }
     } catch (err) {
       console.error("Profile creation failed:", err.message);
     } finally {
@@ -132,18 +135,19 @@ function ResumesPage({ userData, loading, refreshUser }) {
   if (!userData) return <p>No user data available.</p>;
 
   return (
-    <ScrollArea className=" h-[90vh] w-[100%] mx-auto border-none rounded-md py-4 px-10 ">
-      <div className="h-full w-full py-5">
+    <ScrollArea className="h-[90vh] w-full border-none rounded-md py-4 px-2 md:px-10">
+      <div className="h-full w-full py-3">
         <div className="mb-4">
-          <div className="font-bold text-3xl pb-3">Resumes</div>
-          <p>Welcome, {userData.userId.name}! Create a new resume below.</p>
+          <div className="font-bold text-2xl md:text-3xl pb-2">Resumes</div>
+          <p className="text-base md:text-lg">
+            Welcome, {userData.userId.name}! Create a new resume below.
+          </p>
         </div>
-        <div className="flex">
-          {" "}
+        <div className="flex flex-col lg:flex-row gap-6 md:gap-10">
           <Dialog>
             <form>
               <DialogTrigger asChild>
-                <div className="w-[10rem] h-[13rem] group bg-neutral-900/80 flex justify-center items-center hover:bg-neutral-900 cursor-pointer transition-all duration-300">
+                <div className="w-[10rem] max-w-[10rem] h-[13rem] group bg-neutral-900/80 flex justify-center items-center hover:bg-neutral-900 cursor-pointer transition-all duration-300 rounded">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -160,9 +164,9 @@ function ResumesPage({ userData, loading, refreshUser }) {
                   </svg>
                 </div>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[40%]  sm:min-h-[90vh]">
-                <ScrollArea className=" h-[90vh] w-[100%] mx-auto border-none rounded-md py-4 px-10 ">
-                  <DialogHeader>
+              <DialogContent className="sm:max-w-[96vw] md:max-w-[60vw] !p-0 max-h-[95vh] overflow-auto">
+                <ScrollArea className="h-[90vh] w-full px-2 md:px-6 py-4">
+                  <DialogHeader className="p-2">
                     <DialogTitle>Build Your Resume</DialogTitle>
                     <DialogDescription>
                       Give it a title related to the role you&rsquo;re applying
@@ -209,10 +213,7 @@ function ResumesPage({ userData, loading, refreshUser }) {
                     <div className="grid gap-2">
                       <Label>Education</Label>
                       {education.map((edu, idx) => (
-                        <div
-                          key={idx}
-                          className="grid gap-1 border p-2 rounded"
-                        >
+                        <div key={idx} className="grid gap-2 rounded">
                           <Input
                             placeholder="School"
                             value={edu.school}
@@ -245,12 +246,14 @@ function ResumesPage({ userData, loading, refreshUser }) {
                       <Button
                         type="button"
                         variant="outline"
+                        size="sm"
                         onClick={() =>
                           setEducation([
                             ...education,
                             { school: "", degree: "", fieldOfStudy: "" },
                           ])
                         }
+                        className="w-fit"
                       >
                         + Add Education
                       </Button>
@@ -259,10 +262,7 @@ function ResumesPage({ userData, loading, refreshUser }) {
                     <div className="grid gap-2">
                       <Label>Work Experience</Label>
                       {pastWork.map((job, idx) => (
-                        <div
-                          key={idx}
-                          className="grid gap-1 border p-2 rounded"
-                        >
+                        <div key={idx} className="grid gap-2 rounded">
                           <Input
                             placeholder="Company"
                             value={job.company}
@@ -282,7 +282,7 @@ function ResumesPage({ userData, loading, refreshUser }) {
                             }}
                           />
                           <Input
-                            placeholder="Year"
+                            placeholder="Duration in years"
                             value={job.Year}
                             onChange={(e) => {
                               const updated = [...pastWork];
@@ -295,29 +295,36 @@ function ResumesPage({ userData, loading, refreshUser }) {
                       <Button
                         type="button"
                         variant="outline"
+                        size="sm"
                         onClick={() =>
                           setPastWork([
                             ...pastWork,
                             { company: "", position: "", Year: "" },
                           ])
                         }
+                        className="w-fit"
                       >
                         + Add Work
                       </Button>
                     </div>
                   </div>
 
-                  <DialogFooter>
+                  <DialogFooter className="py-3 px-2 flex mx-2 gap-2 flex-wrap">
                     <DialogClose asChild>
-                      <Button variant="outline" disabled={submitting}>
+                      <Button
+                        variant="outline"
+                        className="cursor-pointer"
+                        disabled={submitting}
+                      >
                         Cancel
                       </Button>
                     </DialogClose>
                     <Button
                       type="submit"
                       className="cursor-pointer"
-                      onClick={() => handleProfileSubmit()}
+                      onClick={handleProfileSubmit}
                       disabled={submitting}
+                      variant="secondary"
                     >
                       {submitting ? "Saving..." : "Save changes"}
                     </Button>
@@ -326,25 +333,27 @@ function ResumesPage({ userData, loading, refreshUser }) {
               </DialogContent>
             </form>
           </Dialog>
-          <ResumePreview profile={userData} />
+          <div className="flex-1 w-full max-w-xl">
+            <ResumePreview profile={userData} />
+          </div>
         </div>
       </div>
-      <div className="py-5">
+      <div className="py-4 md:py-5">
         <div className="mb-4">
-          <div className="font-bold text-3xl pb-3">Templates</div>
-          <p>
+          <div className="font-bold text-2xl md:text-3xl pb-2">Templates</div>
+          <p className="text-base md:text-lg">
             {userData.userId.name}! You can choose any of the templates below,
             all are ATS friendly, so this is the one stop solution for you.
           </p>
         </div>
 
-        <div className="flex flex-row  gap">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:flex lg:flex-row gap-2 md:gap-4">
           {templates.map((template, idx) => (
             <Dialog key={idx}>
               <DialogTrigger asChild>
-                <div className="w-full">
+                <div className="w-full max-w-[10rem]">
                   <img
-                    className="w-[10rem] h-[13rem] hover:opacity-60 hover:scale-104 transition-all duration-200 cursor-pointer"
+                    className="w-full aspect-[10/13] object-cover rounded hover:opacity-60 hover:scale-104 transition-all duration-200 cursor-pointer"
                     src={template}
                     alt="template"
                   />
@@ -352,7 +361,7 @@ function ResumesPage({ userData, loading, refreshUser }) {
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
                 <img
-                  className="w-full h-full"
+                  className="w-full h-full object-contain rounded"
                   src={template}
                   alt="template detail"
                 />
@@ -365,7 +374,7 @@ function ResumesPage({ userData, loading, refreshUser }) {
   );
 }
 
-function UserPage({ userData, loading }) {
+function UserPage({ userData, loading, refreshUser }) {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [email] = useState("");
@@ -379,50 +388,61 @@ function UserPage({ userData, loading }) {
   }, [loading, userData]);
 
   const handleSave = async () => {
-    console.log("Saving:", { name, username });
+    try {
+      const token = localStorage.getItem("token");
+      const response = await updateUserProfile({
+        token,
+        userId: { name, username },
+      });
+      if (response && response.data.message) {
+        await refreshUser();
+      }
+    } catch (err) {
+      console.error("Profile creation failed:", err.message);
+    }
   };
 
   if (loading) return <p>Loading user profile...</p>;
   if (!userData) return <p>No user data available.</p>;
 
   return (
-    <div className="flex flex-col gap-10 ">
+    <div className="flex flex-col gap-6 md:gap-10 h-[90vh]">
       <div>
-        <h1 className="font-bold text-3xl">User</h1>
-        <p className="text-neutral-400">
+        <h1 className="font-bold text-2xl md:text-3xl">User</h1>
+        <p className="text-neutral-400 text-base md:text-lg">
           You can seamlessly change your information without any delay!
         </p>
       </div>
 
-      <div className="flex flex-wrap w-full gap-10">
-        <div className="flex flex-col w-[30%]">
+      <div className="flex flex-col md:flex-row flex-wrap w-full gap-4 md:gap-10">
+        <div className="flex flex-col w-full md:w-1/3">
           <Label className="text-md">Name</Label>
           <input
-            className="outline-none border-1 border-neutral-600 px-2 py-1"
+            className="outline-none border border-neutral-600 px-2 py-2 rounded"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </div>
-        <div className="flex flex-col w-[30%]">
+        <div className="flex flex-col w-full md:w-1/3">
           <Label className="text-md">Username</Label>
           <input
-            className="outline-none border-1 border-neutral-600 px-2 py-1"
+            className="outline-none border border-neutral-600 px-2 py-2 rounded"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
         </div>
       </div>
-      <div className="flex flex-col w-[30%]">
+      <div className="flex flex-col w-full md:w-1/3">
         <Label className="text-md">Email</Label>
         <input
-          className="outline-none border-1 border-neutral-600 px-2 py-1"
+          className="outline-none border border-neutral-600 px-2 py-2 rounded"
           value={userData.userId.email}
           readOnly
         />
       </div>
 
       <Button
-        className="rounded-none w-fit cursor-pointer"
+        className="rounded w-fit cursor-pointer"
         variant="secondary"
         onClick={handleSave}
       >

@@ -73,11 +73,14 @@ const ResumePreview = ({ profile }) => {
             </h2>
             {profile.education.map((edu, i) => (
               <div key={i} className="mb-3">
-                <p className="font-medium text-sm text-gray-900">
-                  {edu.degree}
-                </p>
-                <p className="text-sm text-gray-700">{edu.school}</p>
-                <p className="text-sm text-gray-600">{edu.fieldOfStudy}</p>
+                <p className="text-sm ">Institute: {edu.school}</p>
+
+                <div className="flex gap-1">
+                  <p className="font-medium text-sm text-gray-900">
+                    {edu.degree},
+                  </p>
+                  <p className="text-sm ">{edu.fieldOfStudy}</p>
+                </div>
               </div>
             ))}
           </section>
@@ -94,7 +97,7 @@ const ResumePreview = ({ profile }) => {
                 <p className="font-medium text-sm text-gray-900">
                   {exp.position} at {exp.company}
                 </p>
-                <p className="text-sm text-gray-600">{exp.Year}</p>
+                <p className="text-sm ">Years : {exp.Year}</p>
               </div>
             ))}
           </section>
@@ -121,7 +124,7 @@ const ResumePreview = ({ profile }) => {
 
       <button
         onClick={handlePrint}
-        className="w-full max-w-80 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors"
+        className="w-full max-w-80 bg-blue-600 cursor-pointer hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors"
       >
         Download as PDF
       </button>
