@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+
 import UserLayout from "@/layouts/UserLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
